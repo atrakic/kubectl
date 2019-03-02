@@ -1,0 +1,44 @@
+image_config: &image_config
+  IMAGE_NAME: kubectl
+  IMAGE_TAG: 0.1
+
+version: 2
+jobs:
+  imagebuild:
+    machine: true
+    environment:
+      <<: *image_config
+
+    steps:
+      - checkout
+      - run:
+          name: Setup common env vars
+          command: |
+            echo 'export IMAGE_NAME="${IMAGE_NAME}"' >> $BASH_ENV
+            echo 'export IMAGE_TAG="${IMAGE_TAG}"' >> $BASH_ENV
+
+      - run:
+          name: Build and push Docker image
+          command: |
+            TAG="${IMAGE_TAG}.${CIRCLE_BUILD_NUM}"
+            docker build -t $DOCKER_USERNAME/$IMAGE_NAME:$TAG .
+            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+            docker push $DOCKER_USERNAME/$IMAGE_NAME:$TAG
+            docker tag $DOCKER_USERNAME/$IMAGE_NAME:$TAG $DOCKER_USERNAME/$IMAGE_NAME:latest
+            docker push $DOCKER_USERNAME/$IMAGE_NAME:latest
+
+      - run:
+          name: Test image
+          command: |
+            TAG="${IMAGE_TAG}.${CIRCLE_BUILD_NUM}"
+            docker run -it $DOCKER_USERNAME/$IMAGE_NAME:$TAG version --client
+
+      - store_artifacts:
+          path: Dockerfile
+
+workflows:
+  version: 2
+  build_docker:
+    jobs:
+      - imagebuild:
+          context: org-global
