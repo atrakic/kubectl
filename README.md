@@ -1,6 +1,6 @@
 # kubectl
 
-![docker-publish](https://github.com/atrakic/kubectl/workflows/docker-publish/badge.svg)
+[![Docker](https://github.com/atrakic/kubectl/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/atrakic/kubectl/actions/workflows/docker-publish.yml)
 
 ### Usage
 
