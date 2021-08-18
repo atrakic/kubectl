@@ -29,7 +29,6 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v1
         with:
-          registry: ${{ env.REGISTRY }}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
@@ -38,6 +37,15 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          labels: |
+            maintainer=Admir Trakic <xomodo@gmail.com>
+
+      - name: JSON output
+        run: |
+          echo "maintainer=${{ fromJSON(steps.meta.outputs.json).labels['maintainer'] }}"
+          echo "version=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}"
+          echo "revision=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}"
+          echo "created=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
