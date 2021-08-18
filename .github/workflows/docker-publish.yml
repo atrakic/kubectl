@@ -57,3 +57,4 @@ jobs:
       - name: Test image
         run: |
           docker run --rm -i ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} version --client
+          docker image ls ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
