@@ -1,9 +1,9 @@
 # kubectl
 
-[![CircleCI](https://circleci.com/gh/atrakic/kubectl.svg?style=svg)](https://circleci.com/gh/atrakic/kubectl)
+![docker-publish](https://github.com/atrakic/kubectl/workflows/docker-publish/badge.svg)
 
 ### Usage
 
 ```sh
-$ docker run -it xomodo/kubectl
+$ docker run --rm -it xomodo/kubectl version --client
 ```

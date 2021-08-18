@@ -1,6 +1,6 @@
-FROM alpine:3.6
+FROM alpine:latest
 
-ARG K8S_VERSION=v1.13.0
+ARG K8S_VERSION=v1.22.0
 ARG KUBECTL_ARCH=linux/amd64
 
 RUN apk add --no-cache --update ca-certificates curl && \
