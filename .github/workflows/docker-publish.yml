@@ -5,7 +5,7 @@ on:
     branches:
       - master
     tags:
-      - 'v*'
+      - 'v*.*.*'
 
 env:
   REGISTRY: docker.io
@@ -37,22 +37,16 @@ jobs:
           labels: |
             maintainer=Admir Trakic <xomodo@gmail.com>
 
-      - name: JSON output
-        run: |
-          echo "maintainer=${{ fromJSON(steps.meta.outputs.json).labels['maintainer'] }}"
-          echo "version=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}"
-          echo "revision=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}"
-          echo "created=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}"
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
-          push: true
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Test image
         run: |
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           docker run --rm -i ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} version --client
           docker image ls ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
