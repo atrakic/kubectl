@@ -4,12 +4,24 @@
 
 ### Example usage
 
+- Get version
 ```sh
-$ docker run --rm -it ghcr.io/atrakic/kubectl:latest version --client
+docker run --rm -it ghcr.io/atrakic/kubectl:latest version --client
+```
 
-$ alias k='docker run --rm -it -v "$PWD":/app -w /app -v "$HOME/.kube:/root/.kube/:ro" --network host ghcr.io/atrakic/kubectl:latest'
+- Setup in current shell
+```sh
+alias k='docker run --rm -it -v "$PWD":/app -w /app -v "$HOME/.kube:/root/.kube/:ro" --network host ghcr.io/atrakic/kubectl:latest'
+k cluster-info
+```
 
-$ k cluster-info
+- Download binary from image:
+
+```sh
+IMAGE_NAME=ghcr.io/atrakic/kubectl:latest
+docker create --name dummy $IMAGE_NAME
+docker cp dummy:/usr/local/bin/kubectl .
+docker rm -f dummy
 ```
 
 ## License
