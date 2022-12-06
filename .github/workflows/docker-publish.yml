@@ -64,6 +64,7 @@ jobs:
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
+        id: build
         with:
           context: .
           platforms: ${{ matrix.platform }}
@@ -84,4 +85,5 @@ jobs:
           
       - name: Deploy summary
         run: |
-          echo "### ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "### ${{ steps.build.outputs.version }} :rocket:" >> $GITHUB_STEP_SUMMARY
+          #echo "### ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} :rocket:" >> $GITHUB_STEP_SUMMARY
