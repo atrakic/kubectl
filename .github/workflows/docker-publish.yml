@@ -81,10 +81,10 @@ jobs:
       # https://github.com/docker/metadata-action/blob/master/.github/workflows/ci.yml#L274    
       - name: Test image
         run: |
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.docker_meta.outputs.version }}
-          docker run --rm -i ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.docker_meta.outputs.version }} version --client
-          docker image ls ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.docker_meta.outputs.version }}
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
+          docker run --rm -i ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }} version --client
+          docker image ls ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
           
       - name: Deploy summary
         run: |
-          echo "### ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.docker_meta.outputs.version }} :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "### ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }} :rocket:" >> $GITHUB_STEP_SUMMARY
