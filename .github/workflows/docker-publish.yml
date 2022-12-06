@@ -1,8 +1,8 @@
 name: Docker
 
 on:
-  #schedule:
-  #  - cron: '0 */4 * * *' # every 4 hours
+  schedule:
+    - cron: '0 0 1 * *' # https://crontab.guru/once-a-month
   workflow_dispatch:
   pull_request:
     branches:
