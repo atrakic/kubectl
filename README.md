@@ -1,6 +1,8 @@
 # kubectl
 
-[![Docker](https://github.com/atrakic/kubectl/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/atrakic/kubectl/actions/workflows/docker-publish.yml)
+[![docker-publish](https://github.com/atrakic/kubectl/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/atrakic/kubectl/actions/workflows/docker-publish.yml)
+[![license](https://img.shields.io/github/license/atrakic/kubectl.svg)](https://github.com/atrakic/kubectl/blob/master/LICENSE)
+[![release](https://img.shields.io/github/release/atrakic/kubectl/all.svg)](https://github.com/atrakic/kubectl/releases)
 
 ### Example usage
 
@@ -15,12 +17,13 @@ alias k='docker run --rm -it -v "$PWD":/app -w /app -v "$HOME/.kube:/root/.kube/
 k cluster-info
 ```
 
-- Download binary from image:
+- Download binary from latest image:
 
 ```sh
 IMAGE_NAME=ghcr.io/atrakic/kubectl:latest
 docker create --name dummy $IMAGE_NAME
 docker cp dummy:/usr/local/bin/kubectl .
+kubectl version --client
 docker rm -f dummy
 ```
 
