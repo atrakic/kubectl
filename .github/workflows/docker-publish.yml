@@ -2,6 +2,7 @@ name: Docker
 
 on:
   workflow_dispatch:
+  pull_request:
   push:
     branches:
       - master
@@ -18,7 +19,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
     strategy:
       matrix:
         platform: ["linux/amd64","linux/arm64"]
@@ -51,6 +51,14 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           labels: |
             maintainer=Admir Trakic <xomodo@gmail.com>
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
@@ -61,17 +69,16 @@ jobs:
           build-args: 'KUBECTL_ARCH=${{ matrix.platform }}'
           tags: |
             ${{ steps.meta.outputs.tags }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-to: type=inline
           
       - name: Test image
         run: |
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          docker run --rm -i ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} version --client
-          docker image ls ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} }}
+          docker run --rm -i ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} version --client
+          docker image ls ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           
       - name: Deploy summary
         run: |
-          echo "### ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "### ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} :rocket:" >> $GITHUB_STEP_SUMMARY
