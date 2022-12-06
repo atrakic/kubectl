@@ -77,21 +77,14 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-to: type=inline
-          
+
+      # https://github.com/docker/metadata-action/blob/master/.github/workflows/ci.yml#L274    
       - name: Test image
         run: |
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.docker_meta.outputs.version }}
           docker run --rm -i ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.docker_meta.outputs.version }} version --client
           docker image ls ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.docker_meta.outputs.version }}
           
-      - name: Check manifest
-        run: |
-          docker buildx imagetools inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }:${{ steps.docker_meta.outputs.version }}
-      
-      - name: Dump context
-        if: always()
-        uses: crazy-max/ghaction-dump-context@v1
-
       - name: Deploy summary
         run: |
           echo "### ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.docker_meta.outputs.version }} :rocket:" >> $GITHUB_STEP_SUMMARY
