@@ -72,7 +72,7 @@ jobs:
         with:
           context: .
           platforms: ${{ matrix.platform }}
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true # ${{ github.event_name != 'pull_request' }}
           build-args: 'KUBECTL_ARCH=${{ matrix.platform }}'
           tags: |
             ${{ steps.meta.outputs.tags }}
@@ -80,18 +80,16 @@ jobs:
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-to: type=inline
 
-      - name: Test image
-        if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
-          docker run --rm -i ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }} version --client
-          docker image ls ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
-
       - name: Inspect image
         run: |
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
+          docker image ls ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
           docker image inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
-      
+
+      - name: Test image
+        run: |
+          docker run --rm -i ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }} version --client
+
       - name: Check manifest
         run: |
           docker buildx imagetools inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
@@ -101,6 +99,5 @@ jobs:
         uses: crazy-max/ghaction-dump-context@v1
 
       - name: Deploy summary
-        if: ${{ github.event_name != 'pull_request' }}
         run: |
           echo "### ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }} :rocket:" >> $GITHUB_STEP_SUMMARY
