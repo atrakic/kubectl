@@ -80,13 +80,27 @@ jobs:
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-to: type=inline
 
-      # https://github.com/docker/metadata-action/blob/master/.github/workflows/ci.yml#L274    
       - name: Test image
+        if: ${{ github.event_name != 'pull_request' }}
         run: |
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
           docker run --rm -i ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }} version --client
           docker image ls ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
-          
+
+      - name: Inspect image
+        run: |
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
+          docker image inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
+      
+      - name: Check manifest
+        run: |
+          docker buildx imagetools inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
+
+      - name: Dump context
+        if: always()
+        uses: crazy-max/ghaction-dump-context@v1
+
       - name: Deploy summary
+        if: ${{ github.event_name != 'pull_request' }}
         run: |
           echo "### ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }} :rocket:" >> $GITHUB_STEP_SUMMARY
