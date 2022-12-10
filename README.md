@@ -11,10 +11,17 @@
 docker run --rm -it ghcr.io/atrakic/kubectl:latest version --client
 ```
 
-- Setup in current shell
+- Use it as client in current shell
 ```sh
 alias k='docker run --rm -it -v "$PWD":/app -w /app -v "$HOME/.kube:/root/.kube/:ro" --network host ghcr.io/atrakic/kubectl:latest'
 k cluster-info
+```
+
+- Inside k8s cluster (if RBAC settings allows):
+```sh
+SERVICE=kubernetes
+kubectl run -it --rm --image=ghcr.io/atrakic/kubectl:latest --restart=Never kube-test -- \
+  get service $SERVICE --output=jsonpath='{.spec.clusterIPs[0]}'
 ```
 
 - Download binary from latest image:
