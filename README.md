@@ -8,7 +8,7 @@
 
 - Get version
 ```sh
-docker run --rm -it ghcr.io/atrakic/kubectl:latest version --client
+docker run --rm -it ghcr.io/atrakic/kubectl:latest kubectl version --client
 ```
 
 - Use it as client in current shell
@@ -21,7 +21,7 @@ k cluster-info
 ```sh
 SERVICE=kubernetes
 kubectl run -it --rm --image=ghcr.io/atrakic/kubectl:latest --restart=Never kube-test -- \
-  get service $SERVICE --output=jsonpath='{.spec.clusterIPs[0]}'
+  kubectl get service $SERVICE --output=jsonpath='{.spec.clusterIPs[0]}'
 ```
 
 - Download binary from latest image:
